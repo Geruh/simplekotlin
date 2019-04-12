@@ -3,13 +3,13 @@
 println("UW Homework: Simple Kotlin")
 
 // write a "whenFn" that takes an arg of type "Any" and returns a String
-fun whenFn(key:Any): String {
+fun whenFn(key:Any?): String {
     return when(key) {
-        "Hello" -> "World"
+        "Hello" -> "world"
         is String -> "Say what?"
         0 -> "zero"
         1 -> "one"
-        2..10 -> "low number"
+        in 2..10 -> "low number"
         is Int -> "a number"
         else -> "I don't understand"
     }
@@ -17,33 +17,68 @@ fun whenFn(key:Any): String {
 
 // write an "add" function that takes two Ints, returns an Int, and adds the values
 fun add(val1:Int, val2:Int): Int {
-    return (val1 + val2)
+    return val1 + val2
 }
 // write a "sub" function that takes two Ints, returns an Int, and subtracts the values
 fun sub(val1:Int, val2:Int): Int {
-    return (val1 - val2)
+    return val1 - val2
 }
 // write a "mathOp" function that takes two Ints and a function (that takes two Ints and returns an Int), returns an Int, and applies the passed-in-function to the arguments
 fun mathOp(val1:Int, val2:Int, func:(val1:Int, val2:Int) -> Int): Int {
-    return func(val1 + val2)
+    return func(val1, val2)
 }
 // write a class "Person" with first name, last name and age
 class Person(var firstName: String, val lastName: String, var age: Int) {
-    val debugString:String =         
-        get() = "[Person firstName:${firstName} lastName:${lastName} age:${age}]"
+    val debugString:String get() = "[Person firstName:${firstName} lastName:${lastName} age:${age}]"
 
     fun equals(other:Person): Boolean {
         return this.hashCode() == other.hashCode()
     }
-    override fun hashCode() {
-        return (firstName + lastName + age).hashCode
+    override fun hashCode(): Int {
+        return (this.firstName.hashCode() + this.lastName.hashCode() + this.age.hashCode())
     }
 }
 // write a class "Money"
-class Money() {
-
+class Money(var amount: Int, val currency: String) {
+    
+    public fun convert(currencyType:String): Money {
+        var balance = this.amount
+        when(this.currency) {
+            "USD" -> when(currencyType) {
+                "GBP" -> balance = balance / 2
+                "EUR" -> balance = balance * 3 / 2
+                "CAN" -> balance = balance * 5 / 4
+                else -> balance = balance
+            }
+            "GBP" -> when(currencyType) {
+                "USD" -> balance = balance * 2
+                "EUR" -> balance = balance * 3
+                "CAN" -> balance = balance * 5 / 2
+                else -> balance = balance
+            }
+            "EUR" -> when(currencyType) {
+                "GBP" -> balance = balance / 3
+                "USD" -> balance = balance * 2 / 3
+                "CAN" -> balance = balance * 5 / 6
+                else -> balance = balance
+            }
+            "CAN" -> when(currencyType) {
+                "GBP" -> balance = balance * 5 / 2
+                "EUR" -> balance = balance * 6 / 5
+                "USD" -> balance = balance * 5 / 4
+                else -> balance = balance
+            }
+        } 
+        return Money(balance, currencyType)
+    }
+    operator fun plus(otherMoney: Money): Money {
+        var otherBal = otherMoney.convert(this.currency)
+        return Money(otherBal.amount + this.amount, this.currency)
+    }
 }
 // ============ DO NOT EDIT BELOW THIS LINE =============
+
+
 
 print("When tests: ")
 val when_tests = listOf(
@@ -127,3 +162,4 @@ for ( (pair, result) in moneyadd_tests) {
               (pair.first + pair.second).currency == result.currency) "." else "!")
 }
 println("")
+
