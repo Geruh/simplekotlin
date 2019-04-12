@@ -40,7 +40,14 @@ class Person(var firstName: String, val lastName: String, var age: Int) {
 }
 // write a class "Money"
 class Money(var amount: Int, val currency: String) {
-    
+    init {
+        if (amount < 0) {
+            throw Exception("error: negative balance!")
+        }
+        else if (currency != "USD" && currency != "GBP" && currency != "EUR" && currency != "CAN") {
+            throw Exception("error: invalid currency type")
+        }
+    }
     public fun convert(currencyType:String): Money {
         var balance = this.amount
         when(this.currency) {
